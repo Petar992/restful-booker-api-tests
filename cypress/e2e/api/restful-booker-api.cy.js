@@ -245,4 +245,66 @@ describe("Restful Booker API Tests", () => {
       expect(response.status).to.eq(201);
     });
   });
+
+  it("TC08 - Retrieve non-existing booking", () => {
+    cy.request({
+      method: "GET",
+      url: "/booking/999999999",
+      failOnStatusCode: false,
+    }).then((response) => {
+      // Validate booking is not found
+      expect(response.status).to.eq(404);
+    });
+  });
+
+  it("TC09 - Authentication fails with invalid credentials", () => {
+    cy.request({
+      method: "POST",
+      url: "/auth",
+      failOnStatusCode: false,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: {
+        username: "admin",
+        password: "wrongpassword",
+      },
+    }).then((response) => {
+      // Validate response status
+      expect(response.status).to.eq(200);
+
+      // Validate authentication failure response
+      expect(response.body).to.have.property("reason");
+
+      expect(response.body.reason).to.eq("Bad credentials");
+    });
+  });
+
+  it("TC10 - Prevent booking update without authentication", () => {
+    cy.request({
+      method: "PUT",
+      url: `/booking/${bookingId}`,
+      failOnStatusCode: false,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: updatedBookingData,
+    }).then((response) => {
+      // Validate update request is rejected without authentication
+      expect(response.status).to.eq(403);
+    });
+  });
+
+  it("TC11 - Prevent booking deletion without authentication", () => {
+    cy.request({
+      method: "DELETE",
+      url: `/booking/${bookingId}`,
+      failOnStatusCode: false,
+    }).then((response) => {
+      // Validate delete request is rejected without authentication
+      expect(response.status).to.eq(403);
+    });
+  });
 });
