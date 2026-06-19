@@ -18,6 +18,18 @@ const bookingData = {
   additionalneeds: "Breakfast",
 };
 
+const updatedBookingData = {
+  firstname: "Marko",
+  lastname: "Updated",
+  totalprice: 250,
+  depositpaid: false,
+  bookingdates: {
+    checkin: "2026-07-01",
+    checkout: "2026-07-10",
+  },
+  additionalneeds: "Dinner",
+};
+
 describe("Restful Booker API Tests", () => {
   it("TC01 - Create booking with valid data", () => {
     cy.request({
@@ -129,6 +141,76 @@ describe("Restful Booker API Tests", () => {
 
       // Store token for subsequent tests
       token = response.body.token;
+    });
+  });
+
+  it("TC04 - Update existing booking with valid authentication", () => {
+    cy.request({
+      method: "PUT",
+      url: `/booking/${bookingId}`,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: `token=${token}`,
+      },
+      body: updatedBookingData,
+    }).then((response) => {
+      // Validate response status
+      expect(response.status).to.eq(200);
+
+      // Validate updated booking details
+      expect(response.body.firstname).to.eq(updatedBookingData.firstname);
+
+      expect(response.body.lastname).to.eq(updatedBookingData.lastname);
+
+      expect(response.body.totalprice).to.eq(updatedBookingData.totalprice);
+
+      expect(response.body.depositpaid).to.eq(updatedBookingData.depositpaid);
+
+      expect(response.body.bookingdates.checkin).to.eq(
+        updatedBookingData.bookingdates.checkin,
+      );
+
+      expect(response.body.bookingdates.checkout).to.eq(
+        updatedBookingData.bookingdates.checkout,
+      );
+
+      expect(response.body.additionalneeds).to.eq(
+        updatedBookingData.additionalneeds,
+      );
+    });
+  });
+
+  it("TC05 - Partially update booking with valid authentication", () => {
+    const partialUpdateData = {
+      firstname: "Test",
+    };
+
+    cy.request({
+      method: "PATCH",
+      url: `/booking/${bookingId}`,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Cookie: `token=${token}`,
+      },
+      body: partialUpdateData,
+    }).then((response) => {
+      // Validate response status
+      expect(response.status).to.eq(200);
+
+      // Validate partially updated booking details
+      expect(response.body.firstname).to.eq(partialUpdateData.firstname);
+
+      expect(response.body.lastname).to.eq(updatedBookingData.lastname);
+
+      expect(response.body.totalprice).to.eq(updatedBookingData.totalprice);
+
+      expect(response.body.depositpaid).to.eq(updatedBookingData.depositpaid);
+
+      expect(response.body.additionalneeds).to.eq(
+        updatedBookingData.additionalneeds,
+      );
     });
   });
 });
