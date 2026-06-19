@@ -213,4 +213,36 @@ describe("Restful Booker API Tests", () => {
       );
     });
   });
+
+  it("TC06 - Delete booking with valid authentication", () => {
+    cy.request({
+      method: "DELETE",
+      url: `/booking/${bookingId}`,
+      headers: {
+        Cookie: `token=${token}`,
+      },
+    }).then((response) => {
+      // Validate successful deletion
+      expect(response.status).to.eq(201);
+    });
+
+    cy.request({
+      method: "GET",
+      url: `/booking/${bookingId}`,
+      failOnStatusCode: false,
+    }).then((getResponse) => {
+      // Verify booking no longer exist
+      expect(getResponse.status).to.eq(404);
+    });
+  });
+
+  it("TC07 - Verify health check endpoint", () => {
+    cy.request({
+      method: "GET",
+      url: "/ping",
+    }).then((response) => {
+      // Validate health check response
+      expect(response.status).to.eq(201);
+    });
+  });
 });
