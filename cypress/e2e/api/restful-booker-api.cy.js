@@ -1,4 +1,10 @@
 let bookingId;
+let token;
+
+const credentials = {
+  username: "admin",
+  password: "password123",
+};
 
 const bookingData = {
   firstname: "Marko",
@@ -100,6 +106,29 @@ describe("Restful Booker API Tests", () => {
       );
 
       expect(response.body.additionalneeds).to.eq(bookingData.additionalneeds);
+    });
+  });
+
+  it("TC03 - Generate authentication token with valid credentials", () => {
+    cy.request({
+      method: "POST",
+      url: "/auth",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: credentials,
+    }).then((response) => {
+      // Validate response status
+      expect(response.status).to.eq(200);
+
+      // Validate authentication token
+      expect(response.body).to.have.property("token");
+
+      expect(response.body.token).to.be.a("string");
+
+      // Store token for subsequent tests
+      token = response.body.token;
     });
   });
 });
