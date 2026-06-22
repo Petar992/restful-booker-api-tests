@@ -91,7 +91,7 @@ Severity and Priority classifications use a three-level scale: Low, Medium, and 
 
 ---
 
-## Project Structure // Srediti strukturu
+## Project Structure
 
 ```text
 .
@@ -111,15 +111,15 @@ Severity and Priority classifications use a three-level scale: Low, Medium, and 
 │
 ├── .gitignore
 ├── BUG_REPORT.md
+├── README.md
 ├── cypress.config.js
 ├── package-lock.json
-├── package.json
-└── README.md
+└── package.json
 ```
 
----
+## README.md
 
-## Installation // Proveriti ovo za repository
+## Installation
 
 Clone the repository:
 
